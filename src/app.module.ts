@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -15,8 +16,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
+    ProductModule,
   ],
 })
 export class AppModule {}
