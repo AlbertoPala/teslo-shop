@@ -68,4 +68,10 @@ export class Product {
       .replaceAll(' ', '-')
       .replaceAll("'", '');
   }
+  @Column({
+    type: 'text',
+    array: true,
+    default: [],
+  })
+  tags: string[];
 }
