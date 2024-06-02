@@ -30,10 +30,10 @@ export class ProductService {
       const { images = [], ...productDetails } = createProductDto;
       const product = this.productRepository.create({
         ...productDetails,
-        images: images.map(
-          (image) => this.productImageRepository.create({ url: image }),
-          user,
+        images: images.map((image) =>
+          this.productImageRepository.create({ url: image }),
         ),
+        user,
       });
       await this.productRepository.save(product);
       return { ...product, images };

@@ -47,6 +47,9 @@ export class AuthService {
       throw new UnauthorizedException('password migth be wrong');
     return { ...user, token: this.getJWT({ id: user.id }) };
   }
+  async checkAuthStatus(user: User) {
+    return { ...user, token: this.getJWT({ id: user.id }) };
+  }
   //=========================================================================
   private getJWT(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
