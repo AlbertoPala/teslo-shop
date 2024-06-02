@@ -1,6 +1,13 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
+import { META_ROLES } from '../decorators/role-protected.decorator';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -9,9 +16,20 @@ export class UserRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const validRoles: string[] = this.reflector.get(
-      'roles',
+      META_ROLES,
       context.getHandler(),
     );
-    return true;
+    if (!validRoles) return true;
+    if (validRoles.length === 0) return true;
+    const req = context.switchToHttp().getRequest();
+    const user = req.user;
+    if (!user) throw new BadRequestException('user does not have access');
+
+    for (const role of user.roles) {
+      if (validRoles.includes(role)) {
+        return true;
+      }
+    }
+    throw new ForbiddenException(`user need a valid role: [${validRoles}]`);
   }
 }
