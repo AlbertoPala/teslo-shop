@@ -30,7 +30,7 @@ export class AuthService {
       await this.userRepository.save(user);
       delete user.password;
 
-      return { ...user, token: this.getJWT({ email: user.email }) };
+      return { ...user, token: this.getJWT({ id: user.id }) };
     } catch (error) {
       this.handleDBError(error);
     }
@@ -40,12 +40,12 @@ export class AuthService {
     const { password, email } = loginUserDto;
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true },
     });
     if (!user) throw new UnauthorizedException('email migth be wrong');
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('password migth be wrong');
-    return { ...user, token: this.getJWT({ email: user.email }) };
+    return { ...user, token: this.getJWT({ id: user.id }) };
   }
   //=========================================================================
   private getJWT(payload: JwtPayload) {
